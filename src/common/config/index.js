@@ -14,4 +14,4 @@ export const storage_prefix = 'zzm_admin_storage_'
 export const base64_prefix = 'zzm_admin_base64_'
 //接入服务器接口地址根目录
 //http://localhost:51341
-export const server_base_url =isTest ? 'http://localhost:51341' : 'http://dutchboychina.cn/designAdmin/'
+export const server_base_url =isTest ? 'http://localhost:51341' : 'http://dutchboychina.cn/designAdmin/';
