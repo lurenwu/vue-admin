@@ -67,6 +67,7 @@
     <div class="rule">
       <h2>图片取名规则如下</h2>
       <div>人物头像统一命名为tx.jpg或者tx.png</div>
+      <div>人物大图片肖像统一命名为bigtx.jpg或者bigtx.png</div>
       <div>正方形图片统一按zfx+序号命名，如有三张图片，按zfx1.png,zfx2.png,zfx3.png</div>
       <div>案例图片统一按fm+序号命名，如有三张图片，按fm1.png,fm2.png,fm3.png</div>
       <p class="lint">* 所有图片只改变图片名字，格式不用改</p>
