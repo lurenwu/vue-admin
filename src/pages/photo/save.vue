@@ -42,7 +42,7 @@
                 class="upload-demo"
                 ref="upload"
                 :action="url"
-
+                :on-change = "onUpload"
                 :data = "datas"
                 :on-preview="handlePreview"
                 :on-remove="handleRemove"
@@ -67,7 +67,7 @@
     <div class="rule">
       <h2>图片取名规则如下</h2>
       <div>人物头像统一命名为tx.jpg或者tx.png</div>
-      <div>人物大图片肖像统一命名为bigtx.jpg或者bigtx.png</div>
+      <div>人物导师大头像统一命名为bigtx.jpg或者bigtx.png</div>
       <div>正方形图片统一按zfx+序号命名，如有三张图片，按zfx1.png,zfx2.png,zfx3.png</div>
       <div>案例图片统一按fm+序号命名，如有三张图片，按fm1.png,fm2.png,fm3.png</div>
       <p class="lint">* 所有图片只改变图片名字，格式不用改</p>
@@ -84,7 +84,7 @@ export default {
         name: null,
         exampleList: [
           {
-            fm:"",
+            fm: "",
             title1: "",
             des: "",
             url: "",
@@ -103,7 +103,7 @@ export default {
       rules: {
         name: [{ required: true, message: "姓名不能为空", trigger: "blur" }]
       },
-      fileList: [],
+      fileList: []
 
       // fileList: [
       //   {
@@ -125,37 +125,36 @@ export default {
   },
   methods: {
     removeDomain(item) {
-      
       var index = this.form.exampleList.indexOf(item);
       if (index !== -1) {
         this.form.exampleList.splice(index, 1);
       }
     },
     addDomain() {
-      this.form.exampleList.push(
-        {
-          fm:"",
-          title1: "",
-          des: "",
-          url: "",
-          key: Date.now()
-        }
-      );
+      this.form.exampleList.push({
+        fm: "",
+        title1: "",
+        des: "",
+        url: "",
+        key: Date.now()
+      });
     },
     //获取数据
     get_form_data() {
-      this.load_data = true; 
+      this.load_data = true;
       this.$fetch.api_table
-        .getDesignList(
-          {"parentId": this.route_id}
-        )
+        .getDesignList({
+          parentId: this.route_id,
+          page: 1,
+          length: 15
+        })
         .then(({ data }) => {
           var formData = data.list.filter(item => {
-             return item.id === this.route_id;
+            return item.id === this.route_id;
           })[0];
-          this.form = Object.assign({},this.form,formData) ;
-          console.log(this.form)
-          this.load_data = false; 
+          this.form = Object.assign({}, this.form, formData);
+          console.log(this.form);
+          this.load_data = false;
           this.get_pic_data();
         })
         .catch(() => {
@@ -177,7 +176,7 @@ export default {
           this.load_data = false;
         });
     },
-     //获取案例数据
+    //获取案例数据
     getExampleList() {
       // this.load_data = true;
       // this.$fetch.api_table
@@ -219,26 +218,40 @@ export default {
       this.$refs.form.validate(valid => {
         if (!valid) return false;
         this.on_submit_loading = true;
-        this.form.example = JSON.stringify(this.form.exampleList);
-        // this.form.exampleList = [];
-        this.$fetch.api_table
-          .saveExampleInfo(this.form)
+        this.form.example = this.form.exampleList;
+         this.$fetch.api_table
+          .deleteExampleInfo({ id: this.form.id})
           .then(({ data }) => {
-          if (data.zt == "0") {
-            this.on_submit_loading = false;
-            this.$message.success(data.msg);
-            this.load_data = false;
-            this.get_form_data();
+            if (data.zt == "0") {
+              this.form.example.forEach((item)=>{
+                this.$fetch.api_table
+                .saveExampleInfo({ id: this.form.id, example: JSON.stringify(item) })
+                .then(({ data }) => {
+                  if (data.zt == "0") {
+                    this.on_submit_loading = false;
+                    this.$message.success(data.msg);
+                    this.load_data = false;
+                    this.get_form_data();
 
-            // setTimeout(this.$router.back(), 500);
-          } else {
+                    // setTimeout(this.$router.back(), 500);
+                  } else {
+                    this.$message.success(data.msg);
+                  }
+                  this.load_data = false;
+                })
+                .catch(() => {
+                  this.on_submit_loading = false;
+                });
+         
+            })
+            }  else {
             this.$message.success(data.msg);
           }
-          this.load_data = false;
+        
           })
-          .catch(() => {
-            this.on_submit_loading = false;
-          });
+      
+        // this.form.exampleList = [];
+        
       });
     },
     submitUpload() {
@@ -279,6 +292,82 @@ export default {
         this.$message.error("上传图片大小不能超过 700KB!");
       }
       return isCorrectGeshi && isLt2M;
+    },
+    photoCompress(file, w, objDiv) {
+      var _that = this;
+      var ready = new FileReader();
+      /*开始读取指定的Blob对象或File对象中的内容. 当读取操作完成时,readyState属性的值会成为DONE,如果设置了onloadend事件处理程序,则调用之.同时,result属性中将包含一个data: URL格式的字符串以表示所读取文件的内容.*/
+      ready.readAsDataURL(file);
+      ready.onload = ()=> {
+      };
+      this.canvasDataURL(ready.result, w, objDiv);
+      
+    },
+    canvasDataURL(path, obj, callback) {
+      console.log(222)
+      var _that = this;
+      var img = new Image();
+      img.src = path;
+      img.onload = function() {
+        var that = this;
+        // 默认按比例压缩
+        var w = that.width,
+          h = that.height,
+          scale = w / h;
+        w = obj.width || w;
+        h = obj.height || w / scale;
+        var quality = 0.7; // 默认图片质量为0.7
+        //生成canvas
+        var canvas = document.createElement("canvas");
+        var ctx = canvas.getContext("2d");
+        // 创建属性节点
+        var anw = document.createAttribute("width");
+        anw.nodeValue = w;
+        var anh = document.createAttribute("height");
+        anh.nodeValue = h;
+        canvas.setAttributeNode(anw);
+        canvas.setAttributeNode(anh);
+        ctx.drawImage(that, 0, 0, w, h);
+        // 图像质量
+        if (obj.quality && obj.quality <= 1 && obj.quality > 0) {
+          quality = obj.quality;
+        }
+        // quality值越小，所绘制出的图像越模糊
+        var base64 = canvas.toDataURL("image/jpeg", quality);
+        // 回调函数返回base64的值
+        callback(base64);
+      };
+    },
+    onUpload(e) {
+      var that = this;
+      var fileObj = e.raw;
+      this.photoCompress(
+        fileObj,
+        {
+          quality: 0.2
+        },
+        function(base64Codes) {
+          //console.log("压缩后：" + base.length / 1024 + " " + base);
+          var el = that.convertBase64UrlToBlob(base64Codes);
+          e.raw = el;
+        }
+      );
+    },
+    /**
+     * 将以base64的图片url数据转换为Blob
+     * @param urlData
+     * 用url方式表示的base64图片数据
+     */
+    convertBase64UrlToBlob(urlData) {
+      var arr = urlData.split(","),
+        mime = arr[0].match(/:(.*?);/)[1],
+        bstr = atob(arr[1]),
+        n = bstr.length,
+        u8arr = new Uint8Array(n);
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+      }
+      return new Blob([u8arr], { type: mime });
     }
   },
   components: {

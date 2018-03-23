@@ -24,47 +24,19 @@
             <el-form-item >
               
             </el-form-item>
-            <!-- <el-form-item label="性别:">
-              <el-radio-group v-model="form.sex">
-                <el-radio :label="1">男</el-radio>
-                <el-radio :label="2">女</el-radio>
+            <el-form-item label="明星导师:">
+              <el-radio-group v-model="form.isRefer">
+                <el-radio :label="1">是</el-radio>
+                <el-radio :label="0">否</el-radio>
               </el-radio-group>
             </el-form-item>
-            <el-form-item label="年龄:">
-              <el-input-number
-                placeholder="请输入内容"
-                :max="100"
-                :min="1"
-                :value="20"
-                :controls="false"
-                v-model="form.age"
-                style="width: 250px;">
-              </el-input-number>
+            <el-form-item label="称谓:" prop="referName" style="width: 650px;" v-show="form.isRefer === 1">
+              <el-input v-model="form.referName" placeholder="请输入称谓" style="width: 350px;" ></el-input>
             </el-form-item>
-            <el-form-item label="生日:">
-              <el-date-picker
-                v-model="form.birthday"
-                type="date"
-                format="yyyy-MM-dd"
-                :editable="false"
-                @change="on_change_birthday"
-                placeholder="选择生日"
-                style="width: 250px;">
-              </el-date-picker>
+            <el-form-item label="排序序号:" prop="orderBy" style="width: 650px;">
+              <el-input v-model="form.orderBy" placeholder="请输入排序序号" style="width: 350px;"></el-input>
             </el-form-item>
-            <el-form-item label="邮编:">
-              <el-input
-                placeholder="请输入内容"
-                :value="412300"
-                :controls="false"
-                v-model="form.zip"
-                style="width: 250px;"
-                :maxlength="6"
-                :minlength="6">
-              </el-input>
-            </el-form-item> -->
-
-            <el-form-item>
+            <el-form-item style="margin-left:100px;">
               <el-button type="primary" @click="on_submit_form" :loading="on_submit_loading">立即提交</el-button>
               <el-button @click="$router.back()">取消</el-button>
             </el-form-item>
@@ -81,7 +53,8 @@ export default {
   data() {
     return {
       form: {
-        name: null
+        name: null,
+        isRefer: 0
         // sex: 1,
         // age: 20,
         // birthday: this.$dateFormat(new Date, "yyyy-MM-dd"),
@@ -123,7 +96,11 @@ export default {
     get_form_data() {
       this.load_data = true;
       this.$fetch.api_table
-        .getDesignList({"parentId": this.route_id})
+        .getDesignList({
+          "parentId": this.route_id,
+          page: 1,
+          length: 15
+          })
         .then(({ data }) => {
           this.form = data.list.filter(item => {
             return item.id === this.route_id;
@@ -146,7 +123,16 @@ export default {
         if (!valid) return false;
         this.on_submit_loading = true;
         this.$fetch.api_table
-          .saveDesignInfo(this.form)
+          .saveDesignInfo({
+            name: this.form.name,
+            id: this.route_id,
+            area: this.form.area,
+            honor: this.form.honor,
+            introduce: this.form.introduce,
+            isRefer: this.form.isRefer,
+            referName: this.form.referName,
+            orderBy: this.form.orderBy
+          })
           .then(({ data }) => {
             this.$message.success(data.msg);
             setTimeout(this.$router.back(), 500);

@@ -1,7 +1,7 @@
 <template>
   <div class="panel-title">
     <span v-if="title" v-text="title"></span>
-    <div class="fr">
+    <div class="panel-right">
       <slot></slot>
     </div>
   </div>
@@ -15,3 +15,10 @@
     }
   }
 </script>
+<style>
+.panel-right {
+  display: inline-block;
+  margin-left: 300px;
+
+}
+</style>

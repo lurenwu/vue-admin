@@ -75,6 +75,14 @@ export function del(data) {
     data
   })
 }
+//根据id删除数据
+export function deleteExampleInfo(params ) {
+  return fetch({
+    url: port_table.deleteExampleInfo,
+    method: 'post',
+    params
+  })
+}
 //添加或修改数据
 export function saveDesignInfo (params) {
   return fetch({

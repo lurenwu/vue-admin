@@ -34,7 +34,7 @@ export default function fetch(options) {
       timeout: 2000,
       //设置请求时的header
       headers: {
-       
+        
       }
     })
     //请求处理

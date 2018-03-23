@@ -1,6 +1,7 @@
 <template>
   <div class="panel">
     <panel-title :title="$route.meta.title">
+      <input placeholder="请输入姓名搜索" v-model="search" class="search"> 
       <el-button @click.stop="on_refresh" size="small">
         <i class="fa fa-refresh"></i>
       </el-button>
@@ -22,7 +23,7 @@
         width="180">
       </el-table-column> -->
        <el-table-column
-        prop="id"
+        prop="orderBy"
         label="编号"
         width="180">
       </el-table-column>
@@ -91,7 +92,13 @@
         //请求时的loading效果
         load_data: true,
         //批量选择数组
-        batch_select: []
+        batch_select: [],
+        search:''
+      }
+    },
+    watch: {
+      search(newVal, oldVal){
+        this.get_table_data()
       }
     },
     components: {
@@ -111,7 +118,8 @@
         this.load_data = true;
         this.$fetch.api_table.getDesignList({
           page: this.currentPage,
-          length: this.length
+          length: this.length,
+          search:this.search
         })
           .then(data => {
             this.table_data = data.data.list;
@@ -175,3 +183,10 @@
     }
   }
 </script>
+<style>
+.search {
+  border: 1px solid #9E9E9E;
+  height: 25px;
+  padding-left: 8px;
+}
+</style>

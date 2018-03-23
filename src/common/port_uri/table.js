@@ -17,6 +17,8 @@ export const del = "/api/post/table/del"
 export const saveDesignInfo = "/order.ashx?t=saveDesignInfo"
 //添加或修改案例数据
 export const saveExampleInfo = "/order.ashx?t=saveExampleInfo"
+//删除案例数据
+export const deleteExampleInfo = "/order.ashx?t=deleteExampleInfo"
 export const getExampleList = "/order.ashx?t=getExampleList"
 //批量删除
 export const batch_del = "/api/post/table/batch/del"

@@ -16,14 +16,14 @@
         border
         @selection-change="on_batch_select"
         style="width: 100%;">
-     
+
       <el-table-column
         prop="name"
         label="姓名"
         width="180">
       </el-table-column>
-    
-        
+      
+
       </el-table>
       <bottom-tool-bar>
       </bottom-tool-bar>

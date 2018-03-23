@@ -1,5 +1,9 @@
 <template>
   <div class="panel">
+    <panel-title :title="$route.meta.title">
+      <input placeholder="请输入客户姓名搜索" v-model="search" class="search"> 
+      <input placeholder="请输入设计师姓名搜索" v-model="searchDesign" class="search"> 
+    </panel-title>
     <div class="panel-body">
       <el-table
         :data="table_data"
@@ -90,7 +94,9 @@
         //请求时的loading效果
         load_data: true,
         //批量选择数组
-        batch_select: []
+        batch_select: [],
+        search:'',
+        searchDesign:''
       }
     },
     components: {
@@ -100,6 +106,14 @@
     created(){
       this.get_table_data()
     },
+    watch: {
+      search(newVal, oldVal){
+        this.get_table_data()
+      },
+      searchDesign(newVal, oldVal){
+        this.get_table_data()
+      }
+    },
     methods: {
       //刷新
       on_refresh(){
@@ -107,10 +121,13 @@
       },
       //获取数据
       get_table_data(){
+        
         this.load_data = true;
         this.$fetch.api_table.getOrderList({
           page: this.currentPage,
-          length: this.length
+          length: this.length,
+          search: this.search,
+          searchDesign: this.searchDesign
         })
           .then(data => {
             
@@ -175,3 +192,11 @@
     }
   }
 </script>
+<style>
+.search {
+
+  border: 1px solid #9E9E9E;
+  height: 25px;
+  padding-left: 8px;
+}
+</style>
