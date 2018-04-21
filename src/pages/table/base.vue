@@ -140,7 +140,7 @@
         })
           .then(() => {
             this.load_data = true
-            this.$fetch.api_table.delDesign(item)
+            this.$fetch.api_table.delDesign({'id':item.id})
               .then(data => {
                 this.get_table_data()
                 this.$message.success(data.data.msg)
